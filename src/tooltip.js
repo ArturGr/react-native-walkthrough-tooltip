@@ -97,7 +97,7 @@ class Tooltip extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-
+    this.firstRender = true;
     this.state = {
       contentSize: new Size(0, 0),
       anchorPoint: new Point(0, 0),
@@ -117,6 +117,15 @@ class Tooltip extends Component<Props, State> {
   componentWillReceiveProps(nextProps: Props) {
     const willBeVisible = nextProps.isVisible;
     const { isVisible } = this.props;
+    
+    if (this.firstRender) {
+      this.measureChildRect();
+      this.firstRender = false;
+    } else {
+      InteractionManager.runAfterInteractions(() => {
+        this.measureChildRect();
+      });
+    }
 
     if (willBeVisible !== isVisible) {
       if (willBeVisible) {
